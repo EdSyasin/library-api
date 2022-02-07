@@ -57,6 +57,19 @@ router.put('/:id', fileMiddleware.single('cover'), (request, response) => {
     }
 })
 
+router.get('/:id/download', (request, response) => {
+    const book = Book.find(request.params.id)
+    if (!book) {
+        response.status(404).json({error: 'Книга не найдена'});
+    } else {
+        response.download(book.fileBook, book.fileName, err=>{
+            if (err){
+                response.status(404).json({error: 'Проблема с загрузкой файла'});
+            }
+        });
+    }
+});
+
 router.delete('/:id', (request, response) => {
     const {id} = request.params;
     const result = Book.find(id);
