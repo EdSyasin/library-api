@@ -2,7 +2,7 @@ const router = require('express').Router()
 const Book = require("../models/Book");
 const fileMiddleware = require("../FileMiddleware");
 
-router.get('/books/:id', (request, response) => {
+router.get('/:id', (request, response) => {
     const {id} = request.params;
     const result = Book.find(id);
     if (result) {
@@ -12,7 +12,7 @@ router.get('/books/:id', (request, response) => {
     }
 })
 
-router.get('/books', (request, response) => {
+router.get('/', (request, response) => {
     const result = Book.getList();
     if (result.length > 0) {
         response.json(result);
@@ -21,7 +21,7 @@ router.get('/books', (request, response) => {
     }
 })
 
-router.post('/books', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cover', maxCount: 1}]), (request, response) => {
+router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cover', maxCount: 1}]), (request, response) => {
     const { book, cover } = request.files;
     if(book){
         const {title, description, authors, favorite} = request.body;
@@ -39,7 +39,7 @@ router.post('/books', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name:
     }
 })
 
-router.put('/books/:id', fileMiddleware.single('cover'), (request, response) => {
+router.put('/:id', fileMiddleware.single('cover'), (request, response) => {
     const book = Book.find(request.params.id);
     if (!book) {
         response.status(404).json({error: 'Книга не найдена'});
@@ -57,7 +57,7 @@ router.put('/books/:id', fileMiddleware.single('cover'), (request, response) => 
     }
 })
 
-router.delete('/books/:id', (request, response) => {
+router.delete('/:id', (request, response) => {
     const {id} = request.params;
     const result = Book.find(id);
     if (result) {

@@ -7,7 +7,7 @@ const booksRouter = require('./routes/booksRouter')
 
 app.use(bodyParser.json());
 
-app.use('/api', booksRouter);
+app.use('/api/books', booksRouter);
 
 app.listen(config.port);
 
