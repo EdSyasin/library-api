@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const Book = require("../models/Book");
-const fileMiddleware = require("../FileMiddleware");
+const fileMiddleware = require("../middleware/FileMiddleware");
 
 router.get('/:id', (request, response) => {
     const {id} = request.params;
