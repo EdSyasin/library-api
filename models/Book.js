@@ -10,18 +10,7 @@ let booksDatabase = [
         fileCover: "imgs/1.jpg",
         fileName: "1.epub",
         fileBook: 'files/1.epub'
-    },
-    {
-        id: '2',
-        title: "Книга 2",
-        description: "Описание книги 2",
-        authors: "Автор книги 2",
-        favorite: "favorite",
-        fileCover: "imgs/2.jpg",
-        fileName: "files/2.epub",
-        fileBook: 'files/2.epub'
-    },
-
+    }
 ]
 
 module.exports = class Book {
