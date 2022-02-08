@@ -1,0 +1,18 @@
+<%- include('../components/layout-start') %>
+
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <% if (books.length) { %>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                <% books.forEach(book => { %>
+                <div class="col">
+                    <%- include('../components/book', { book: book }) %>
+                </div>
+                <% })} else { %>
+                    <p>Книги не найдены</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+<%- include('../components/layout-end') %>

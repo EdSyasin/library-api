@@ -1,16 +1,7 @@
 const uuid = require('uuid');
 
 let booksDatabase = [
-    {
-        id: '1',
-        title: "Книга 1",
-        description: "Описание книги 1",
-        authors: "Автор книги 1",
-        favorite: "favorite",
-        fileCover: "imgs/1.jpg",
-        fileName: "1.epub",
-        fileBook: 'files/1.epub'
-    }
+
 ]
 
 module.exports = class Book {

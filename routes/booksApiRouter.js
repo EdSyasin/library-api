@@ -14,7 +14,11 @@ router.get('/:id', (request, response) => {
 
 router.get('/', (request, response) => {
     const result = Book.getList();
-    response.render('books/index', {books: result})
+    if (result.length > 0) {
+        response.json(result);
+    } else {
+        response.status(404).json({error: 'Книги не найдены'});
+    }
 })
 
 router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cover', maxCount: 1}]), (request, response) => {
