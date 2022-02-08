@@ -1,0 +1,25 @@
+<form method="post" action="/books/<%= book.id %>" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="title" class="form-label">Название</label>
+        <input type="text" class="form-control" id="title" name="title" value="<%= book.title %>">
+    </div>
+
+    <div class="mb-3">
+        <label for="authors" class="form-label">Авторы</label>
+        <input type="text" class="form-control" id="authors" name="authors" value="<%= book.authors %>">
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Описание</label>
+        <textarea class="form-control" id="description" name="description" rows="3"><%= book.description %></textarea>
+    </div>
+
+    <% if (!book.id) { %>
+    <div class="mb-3">
+        <label for="book" class="form-label">Фаил книги</label>
+        <input class="form-control" type="file" id="book" name="book">
+    </div>
+    <% } %>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
