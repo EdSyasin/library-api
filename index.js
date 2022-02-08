@@ -10,6 +10,7 @@ const usersRouter = require('./routes/usersRouter')
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.use('/books', booksRouter);
 app.use('/api/books', booksApiRouter);

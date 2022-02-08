@@ -1,0 +1,14 @@
+<%- include('../components/layout-start') %>
+
+<div class="container mt-5">
+    <% if (errors.book) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= errors.book %>
+        </div>
+    <% } %>
+
+    <%- include('../components/bookForm', { book: {} }) %>
+
+</div>
+
+<%- include('../components/layout-end') %>

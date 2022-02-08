@@ -1,0 +1,14 @@
+<%- include('../components/layout-start') %>
+
+<div class="container mt-5">
+    <% if (success.bookAdded) { %>
+    <div class="alert alert-success" role="alert">
+        <%= success.bookAdded %>
+    </div>
+    <% } %>
+
+    <%- include('../components/bookForm', { book: book }) %>
+
+</div>
+
+<%- include('../components/layout-end') %>

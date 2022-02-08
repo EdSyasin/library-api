@@ -1,14 +1,19 @@
 const router = require('express').Router()
 const Book = require("../models/Book");
 const fileMiddleware = require("../middleware/FileMiddleware");
+const prepareRenderData = require('../utilities/prepareRenderData');
+
+router.get('/new', (request, response) => {
+    response.render('books/create', prepareRenderData({}))
+})
 
 router.get('/:id', (request, response) => {
     const {id} = request.params;
     const result = Book.find(id);
     if (result) {
-        response.json(result);
+        response.render('books/edit', prepareRenderData({book: result}))
     } else {
-        response.status(404).json({'error': 'Книга не найдены'});
+        response.render('errors/404', {error: 'книга не найдена'})
     }
 })
 
@@ -29,16 +34,16 @@ router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cov
         const newBook = new Book(bookTitle, description || null, authors || null, favorite || null, fileCover, filename, fileBook);
         newBook.save();
 
-        response.json(newBook);
+        response.redirect(`/books`)
     } else {
-        response.status(400).json({error: 'Нехватает данных'})
+        response.render('books/create', prepareRenderData({}, {}, {book: 'Добавьте фаил книги'}))
     }
 })
 
-router.put('/:id', fileMiddleware.single('cover'), (request, response) => {
+router.post('/:id', fileMiddleware.single('cover'), (request, response) => {
     const book = Book.find(request.params.id);
     if (!book) {
-        response.status(404).json({error: 'Книга не найдена'});
+        response.render('errors/404', {error: 'книга не найдена'})
     } else {
         Object.keys(request.body)
             .filter(key => ['title', 'description', 'authors', 'favorite'].includes(key))
@@ -49,31 +54,18 @@ router.put('/:id', fileMiddleware.single('cover'), (request, response) => {
             book.fileCover = request.file.path;
         }
         book.save();
-        response.json(book);
+        response.render('books/edit',  prepareRenderData({book: book }, {bookAdded: 'Книга сохранена'}))
     }
 })
 
-router.get('/:id/download', (request, response) => {
-    const book = Book.find(request.params.id)
-    if (!book) {
-        response.status(404).json({error: 'Книга не найдена'});
-    } else {
-        response.download(book.fileBook, book.fileName, err=>{
-            if (err){
-                response.status(404).json({error: 'Проблема с загрузкой файла'});
-            }
-        });
-    }
-});
-
-router.delete('/:id', (request, response) => {
+router.get('/:id/delete', (request, response) => {
     const {id} = request.params;
     const result = Book.find(id);
     if (result) {
-        result.delete()
-        response.json('ok');
+        result.delete();
+        response.redirect('/books');
     } else {
-        response.status(404).json({error: 'Книга не найдены'});
+        response.render('errors/404', {error: 'книга не найдена'})
     }
 })
 
