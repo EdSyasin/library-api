@@ -1,0 +1,23 @@
+version: "3.5"
+
+services:
+
+  library:
+    image: edsyasin/library-api:latest
+    container_name: library-api
+    ports:
+      - 80:3000
+    restart: on-failure
+    depends_on:
+      - counter
+    environment:
+      - "COUNTER_HOST=counter"
+      - "COUNTER_PORT=3000"
+  counter:
+    image: edsyasin/library-counter:latest
+    container_name: library-counter
+    ports:
+      - 8080:3000
+    restart: on-failure
+    volumes:
+      - /d/Ed/Desktop/counter_storage:/app/storage
