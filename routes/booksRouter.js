@@ -2,15 +2,22 @@ const router = require('express').Router()
 const Book = require("../models/Book");
 const fileMiddleware = require("../middleware/FileMiddleware");
 const prepareRenderData = require('../utilities/prepareRenderData');
+const requester = require("../utilities/request");
+const config = require("../config");
 
 router.get('/new', (request, response) => {
     response.render('books/create', prepareRenderData({}))
 })
 
-router.get('/:id', (request, response) => {
+router.get('/:id', async (request, response) => {
     const {id} = request.params;
     const result = Book.find(id);
     if (result) {
+        try {
+            result.showCount = await requester.post(config.counterHost, `/counter/${result.id}/incr`);
+        } catch (err) {
+            console.log('count err', err);
+        }
         response.render('books/edit', prepareRenderData({book: result}))
     } else {
         response.render('errors/404', {error: 'книга не найдена'})

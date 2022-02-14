@@ -6,6 +6,9 @@
         <%= success.bookAdded %>
     </div>
     <% } %>
+    <% if (book.showCount) { %>
+        Книга просмотрена <%= book.showCount %> раз
+    <% } %>
 
     <%- include('../components/bookForm', { book: book }) %>
 
