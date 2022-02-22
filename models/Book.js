@@ -1,10 +1,34 @@
 const uuid = require('uuid');
+const { Schema, model } = require('mongoose');
 
-let booksDatabase = [
+const BookSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String
+    },
+    authors: {
+        type: String
+    },
+    favorites: {
+        type: String
+    },
+    fileCover: {
+        type: String
+    },
+    fileName: {
+        type: String
+    }
 
-]
+});
 
-module.exports = class Book {
+module.exports = model('Book', BookSchema);
+
+const booksDatabase = [];
+
+class Book {
     constructor(title, description, authors, favorite, fileCover, fileName, fileBook){
         this.title = title;
         this.description = description;

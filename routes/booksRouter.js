@@ -24,8 +24,9 @@ router.get('/:id', async (request, response) => {
     }
 })
 
-router.get('/', (request, response) => {
-    const result = Book.getList();
+router.get('/', async (request, response) => {
+    const result = await Book.find();
+    console.log(result)
     response.render('books/index', {books: result})
 })
 
@@ -38,7 +39,16 @@ router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cov
         const fileBook = book[0].path;
         const fileCover = cover ? cover[0].path : null
 
-        const newBook = new Book(bookTitle, description || null, authors || null, favorite || null, fileCover, filename, fileBook);
+        // const newBook = new Book(bookTitle, description || null, authors || null, favorite || null, fileCover, filename, fileBook);
+        const newBook = new Book({
+            title: bookTitle,
+            description: description,
+            authors: authors,
+            favorite: favorite,
+            fileCover: fileCover,
+            fileBook: fileBook
+        });
+
         newBook.save();
 
         response.redirect(`/books`)
