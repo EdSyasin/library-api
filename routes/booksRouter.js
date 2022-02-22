@@ -11,7 +11,7 @@ router.get('/new', (request, response) => {
 
 router.get('/:id', async (request, response) => {
     const {id} = request.params;
-    const result = Book.find(id);
+    const result = await Book.findById(id);
     if (result) {
         try {
             result.showCount = await requester.post(config.counterHost, `/counter/${result.id}/incr`);
@@ -26,7 +26,6 @@ router.get('/:id', async (request, response) => {
 
 router.get('/', async (request, response) => {
     const result = await Book.find();
-    console.log(result)
     response.render('books/index', {books: result})
 })
 
