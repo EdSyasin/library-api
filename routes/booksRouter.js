@@ -29,7 +29,7 @@ router.get('/', async (request, response) => {
     response.render('books/index', {books: result})
 })
 
-router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cover', maxCount: 1}]), (request, response) => {
+router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cover', maxCount: 1}]), async (request, response) => {
     const { book, cover } = request.files;
     if(book){
         const {title, description, authors, favorite} = request.body;
@@ -45,10 +45,11 @@ router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cov
             authors: authors,
             favorite: favorite,
             fileCover: fileCover,
+            fileName: filename,
             fileBook: fileBook
         });
 
-        newBook.save();
+        await newBook.save();
 
         response.redirect(`/books`)
     } else {
@@ -56,8 +57,9 @@ router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cov
     }
 })
 
-router.post('/:id', fileMiddleware.single('cover'), (request, response) => {
-    const book = Book.find(request.params.id);
+router.post('/:id', fileMiddleware.single('cover'), async (request, response) => {
+    const book = await Book.findById(request.params.id);
+    console.log(book)
     if (!book) {
         response.render('errors/404', {error: 'книга не найдена'})
     } else {
@@ -74,9 +76,10 @@ router.post('/:id', fileMiddleware.single('cover'), (request, response) => {
     }
 })
 
-router.get('/:id/delete', (request, response) => {
+router.get('/:id/delete', async (request, response) => {
     const {id} = request.params;
-    const result = Book.find(id);
+    const result = await Book.findById(id);
+    console.log(result)
     if (result) {
         result.delete();
         response.redirect('/books');
