@@ -20,7 +20,15 @@ app.use('/api/users', usersRouter);
 
 (async () => {
     try {
-        await mongoose.connect('mongodb://libuser:xb46yt@localhost:27017/library');
+        //await mongoose.connect(`mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}/${config.mongoDb}`);
+        await mongoose.connect(`mongodb://${config.mongoHost}:${config.mongoPort}`, {
+            user: config.mongoUser,
+            pass: config.mongoPassword,
+            dbName: config.mongoDb,
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
+
         app.listen(config.port);
     } catch (error) {
         console.log('error connect', error);
