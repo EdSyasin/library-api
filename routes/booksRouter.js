@@ -11,7 +11,7 @@ router.get('/new', (request, response) => {
 
 router.get('/:id', async (request, response) => {
     const {id} = request.params;
-    const result = Book.find(id);
+    const result = await Book.findById(id);
     if (result) {
         try {
             result.showCount = await requester.post(config.counterHost, `/counter/${result.id}/incr`);
@@ -24,12 +24,12 @@ router.get('/:id', async (request, response) => {
     }
 })
 
-router.get('/', (request, response) => {
-    const result = Book.getList();
+router.get('/', async (request, response) => {
+    const result = await Book.find();
     response.render('books/index', {books: result})
 })
 
-router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cover', maxCount: 1}]), (request, response) => {
+router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cover', maxCount: 1}]), async (request, response) => {
     const { book, cover } = request.files;
     if(book){
         const {title, description, authors, favorite} = request.body;
@@ -38,8 +38,18 @@ router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cov
         const fileBook = book[0].path;
         const fileCover = cover ? cover[0].path : null
 
-        const newBook = new Book(bookTitle, description || null, authors || null, favorite || null, fileCover, filename, fileBook);
-        newBook.save();
+        // const newBook = new Book(bookTitle, description || null, authors || null, favorite || null, fileCover, filename, fileBook);
+        const newBook = new Book({
+            title: bookTitle,
+            description: description,
+            authors: authors,
+            favorite: favorite,
+            fileCover: fileCover,
+            fileName: filename,
+            fileBook: fileBook
+        });
+
+        await newBook.save();
 
         response.redirect(`/books`)
     } else {
@@ -47,8 +57,9 @@ router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cov
     }
 })
 
-router.post('/:id', fileMiddleware.single('cover'), (request, response) => {
-    const book = Book.find(request.params.id);
+router.post('/:id', fileMiddleware.single('cover'), async (request, response) => {
+    const book = await Book.findById(request.params.id);
+    console.log(book)
     if (!book) {
         response.render('errors/404', {error: 'книга не найдена'})
     } else {
@@ -65,9 +76,10 @@ router.post('/:id', fileMiddleware.single('cover'), (request, response) => {
     }
 })
 
-router.get('/:id/delete', (request, response) => {
+router.get('/:id/delete', async (request, response) => {
     const {id} = request.params;
-    const result = Book.find(id);
+    const result = await Book.findById(id);
+    console.log(result)
     if (result) {
         result.delete();
         response.redirect('/books');
