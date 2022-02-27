@@ -9,10 +9,18 @@ const booksApiRouter = require('./routes/booksApiRouter');
 const userRoutes = require('./routes/userRoutes');
 
 const mongoose = require('mongoose');
+const passport = require('./services/passport');
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(require('express-session')({
+    secret: 'KeKeKeKe', // change to env
+    resave: false,
+    saveUninitialized: false,
+}));
+app.use(passport.initialize());
+app.use(passport.session())
 
 app.use('/user', userRoutes);
 app.use('/books', booksRouter);
