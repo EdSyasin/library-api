@@ -7,7 +7,7 @@ const passport = require('../services/passport');
 
 router.get('/me', (request, response) => {
     if (request.isAuthenticated()) {
-        response.json(request.user)
+        response.render('user/profile', prepareRenderData({ user: request.user }));
     } else {
         response.redirect('/user/login')
     }

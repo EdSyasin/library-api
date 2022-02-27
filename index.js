@@ -15,7 +15,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(require('express-session')({
-    secret: 'KeKeKeKe', // change to env
+    secret: config.secret,
     resave: false,
     saveUninitialized: false,
 }));
