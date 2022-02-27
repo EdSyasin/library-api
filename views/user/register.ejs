@@ -1,0 +1,106 @@
+<html>
+<head>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <title>Библиотека</title>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
+
+        .form-signin {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            /* margin: auto; */
+        }
+
+        .form-signin .form-floating:focus-within {
+            z-index: 2;
+        }
+
+        .form-control_username {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .form-control_email, .form-control_password {
+            margin-bottom: -1px;
+            border-radius: 0;
+        }
+
+        .form-control_repassword {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+    </style>
+
+</head>
+<body class="text-center">
+
+<main class="form-signin" style="max-width: 330px; margin: auto">
+    <form action="/user/signup" method="post">
+        <h1 class="h3 mb-3 fw-normal">Регистрация</h1>
+
+        <div class="form-floating">
+            <input <% if (fields.username) { %> value="<%= fields.username %>" <% } %> type="username" class="form-control form-control_username <% if (errors.username) { %> is-invalid <% } %>" id="floatingInput" placeholder="username" control-id="ControlID-1" name="username">
+            <label for="floatingInput">Имя пользователя</label>
+            <% if (errors.username) { %>
+            <div class="invalid-feedback">
+                <%= errors.username %>
+            </div>
+            <% } %>
+        </div>
+        <div class="form-floating">
+            <input <% if (fields.email) { %> value="<%= fields.email %>" <% } %> type="email" class="form-control form-control_email <% if (errors.email) { %> is-invalid <% } %>" id="floatingInput" placeholder="name@example.com" control-id="ControlID-2" name="email">
+            <label for="floatingInput">Почта</label>
+            <% if (errors.email) { %>
+                <div class="invalid-feedback">
+                    <%= errors.email %>
+                </div>
+            <% } %>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control form-control_password <% if (errors.password) { %> is-invalid <% } %>" id="floatingPassword" placeholder="Password" control-id="ControlID-3" name="password">
+            <label for="floatingPassword">Пароль</label>
+            <% if (errors.password) { %>
+                <div class="invalid-feedback">
+                    <%= errors.password %>
+                </div>
+            <% } %>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control form-control_repassword <% if (errors.repassword) { %> is-invalid <% } %>" id="floatingPassword" placeholder="Password" control-id="ControlID-4" name="repassword">
+            <label for="floatingPassword">Повторите пароль</label>
+            <% if (errors.repassword) { %>
+                <div class="invalid-feedback">
+                    <%= errors.repassword %>
+                </div>
+            <% } %>
+        </div>
+
+        <button class="w-100 btn btn-lg btn-primary" type="submit" control-id="ControlID-5">Зарегистрироваться</button>
+    </form>
+</main>
+
+
+
+
+
+</body>
+</html>
+
