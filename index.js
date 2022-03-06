@@ -2,6 +2,8 @@ const config = require('./config');
 
 const express = require('express');
 const app = express();
+const server = require('http').createServer(app)
+
 const bodyParser = require('body-parser');
 
 const booksRouter = require('./routes/booksRouter');
@@ -11,28 +13,8 @@ const userRoutes = require('./routes/userRoutes');
 
 const mongoose = require('mongoose');
 const passport = require('./services/passport');
+const io = (require('./services/socket'))(server);
 
-const { Server } = require('socket.io')
-const server = require('http').createServer(app)
-const io = new Server(server);
-const Comment = require('./models/Comment')
-
-io.on('connection', (socket) => {
-    console.log('a user connected');
-
-    const { roomName } = socket.handshake.query;
-    socket.join(roomName)
-
-    socket.on('comment', async (payload) => {
-        console.log(payload)
-        const newComment = new Comment({
-            book: payload.bookId,
-            text: payload.comment
-        });
-        await newComment.save()
-        io.to(roomName).emit('comment', payload.comment)
-    })
-});
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
