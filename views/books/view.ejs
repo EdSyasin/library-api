@@ -1,0 +1,166 @@
+<%- include('../components/layout-start') %>
+
+<div class="container mt-5">
+    <% if (errors.book) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= errors.book %>
+        </div>
+    <% } %>
+
+    <h1><%= book.title %></h1>
+    <form id="comment-form" onsubmit="return false">
+        <div class="mb-3">
+            <label for="comment" class="form-label">Комментарий</label>
+            <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+    <style>
+        p {
+            margin: 0 0 1em;
+        }
+
+        .comment {
+            overflow: hidden;
+            padding: 0 0 1em;
+            border-bottom: 1px solid #ddd;
+            margin: 0 0 1em;
+            *zoom: 1;
+        }
+
+        .comment-img {
+            float: left;
+            margin-right: 33px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .comment-img img {
+            display: block;
+        }
+
+        .comment-body {
+            overflow: hidden;
+        }
+
+        .comment .text {
+            padding: 10px;
+            border: 1px solid #e5e5e5;
+            border-radius: 5px;
+            background: #fff;
+        }
+
+        .comment .text p:last-child {
+            margin: 0;
+        }
+
+        .comment .attribution {
+            margin: 0.5em 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Decoration */
+
+        .comments,
+        .comment {
+            position: relative;
+        }
+
+        .comments:before,
+        .comment:before,
+        .comment .text:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 65px;
+        }
+
+        .comments:before {
+            width: 3px;
+            top: -20px;
+            bottom: -20px;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .comment:before {
+            width: 9px;
+            height: 9px;
+            border: 3px solid #fff;
+            border-radius: 100px;
+            margin: 16px 0 0 -6px;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.2), inset 0 1px 1px rgba(0,0,0,0.1);
+            background: #ccc;
+        }
+
+        .comment:hover:before {
+            background: orange;
+        }
+
+        .comment .text:before {
+            top: 18px;
+            left: 78px;
+            width: 9px;
+            height: 9px;
+            border-width: 0 0 1px 1px;
+            border-style: solid;
+            border-color: #e5e5e5;
+            background: #fff;
+            -webkit-transform: rotate(45deg);
+            -moz-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            -o-transform: rotate(45deg);
+        }
+    </style>
+
+    <section id="comments" class="comments">
+        <% comments.reverse().forEach(comment => {  %>
+            <article class="comment">
+                <a class="comment-img" href="#non">
+                    <img src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d5g0?s=50" alt="" width="50"
+                         height="50">
+                </a>
+                <div class="comment-body">
+                    <div class="text">
+                        <%= comment.text %>
+                    </div>
+                </div>
+            </article>
+        <% }) %>
+    </section>
+
+</div>
+
+<script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
+<script>
+    const bookId = "<%= book.id %>"
+    const commentRoom = `books/${bookId}/comments`
+    const socket = io.connect('/', { query: `roomName=${commentRoom}`});
+    const comments = document.getElementById('comments');
+
+    socket.on('comment', comment => {
+        const html = `
+            <article class="comment">
+            <a class="comment-img" href="#non">
+                <img src="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d5g0?s=50" alt="" width="50"
+                     height="50">
+            </a>
+            <div class="comment-body">
+                <div class="text">
+                    ${comment}
+                </div>
+            </div>
+        </article>
+        `;
+        comments.insertAdjacentHTML('afterbegin', html)
+    })
+
+    document.addEventListener('submit', event => {
+        const formData = new FormData(event.target);
+        const comment = formData.get('comment');
+        socket.emit('comment', { bookId, comment });
+        event.target.reset()
+    })
+</script>
+
+<%- include('../components/layout-end') %>
