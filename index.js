@@ -1,6 +1,9 @@
 const config = require('./config');
+
 const express = require('express');
 const app = express();
+const server = require('http').createServer(app)
+
 const bodyParser = require('body-parser');
 
 const booksRouter = require('./routes/booksRouter');
@@ -10,6 +13,8 @@ const userRoutes = require('./routes/userRoutes');
 
 const mongoose = require('mongoose');
 const passport = require('./services/passport');
+const io = (require('./services/socket'))(server);
+
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
@@ -37,7 +42,7 @@ app.use('/api/books', booksApiRouter);
             useUnifiedTopology: true
         });
 
-        app.listen(config.port);
+        server.listen(config.port);
     } catch (error) {
         console.log('error connect', error);
     }

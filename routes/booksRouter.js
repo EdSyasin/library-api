@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const Book = require("../models/Book");
+const Comment = require("../models/Comment");
 const fileMiddleware = require("../middleware/FileMiddleware");
 const prepareRenderData = require('../utilities/prepareRenderData');
 const requester = require("../utilities/request");
@@ -10,6 +11,17 @@ router.get('/new', (request, response) => {
 })
 
 router.get('/:id', async (request, response) => {
+    const {id} = request.params;
+    const result = await Book.findById(id);
+    const comments = await Comment.find({book: id})
+    if (result) {
+        response.render('books/view', prepareRenderData({book: result, comments}))
+    } else {
+        response.render('errors/404', {error: 'книга не найдена'})
+    }
+})
+
+router.get('/:id/edit', async (request, response) => {
     const {id} = request.params;
     const result = await Book.findById(id);
     if (result) {
