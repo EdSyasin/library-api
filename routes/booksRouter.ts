@@ -1,3 +1,5 @@
+import {Request, Response} from "express";
+
 const router = require('express').Router()
 const Book = require("../models/Book");
 const Comment = require("../models/Comment");
@@ -6,11 +8,11 @@ const prepareRenderData = require('../utilities/prepareRenderData');
 const requester = require("../utilities/request");
 const config = require("../config");
 
-router.get('/new', (request, response) => {
+router.get('/new', (request: Request, response: Response) => {
     response.render('books/create', prepareRenderData({}))
 })
 
-router.get('/:id', async (request, response) => {
+router.get('/:id', async (request: Request, response: Response) => {
     const {id} = request.params;
     const result = await Book.findById(id);
     const comments = await Comment.find({book: id})
@@ -21,7 +23,7 @@ router.get('/:id', async (request, response) => {
     }
 })
 
-router.get('/:id/edit', async (request, response) => {
+router.get('/:id/edit', async (request: Request, response: Response) => {
     const {id} = request.params;
     const result = await Book.findById(id);
     if (result) {
@@ -36,13 +38,15 @@ router.get('/:id/edit', async (request, response) => {
     }
 })
 
-router.get('/', async (request, response) => {
+router.get('/', async (request: Request, response: Response) => {
     const result = await Book.find();
     response.render('books/index', {books: result})
 })
 
-router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cover', maxCount: 1}]), async (request, response) => {
-    const { book, cover } = request.files;
+router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cover', maxCount: 1}]), async (request: Request, response: Response) => {
+    const files = request.files
+    const book = files && !Array.isArray(files) ? files.book : undefined
+    const cover = files && !Array.isArray(files) ? files.cover : undefined
     if(book){
         const {title, description, authors, favorite} = request.body;
         const bookTitle = title || book[0].originalname
@@ -69,9 +73,8 @@ router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cov
     }
 })
 
-router.post('/:id', fileMiddleware.single('cover'), async (request, response) => {
+router.post('/:id', fileMiddleware.single('cover'), async (request: Request, response: Response) => {
     const book = await Book.findById(request.params.id);
-    console.log(book)
     if (!book) {
         response.render('errors/404', {error: 'книга не найдена'})
     } else {
@@ -88,7 +91,7 @@ router.post('/:id', fileMiddleware.single('cover'), async (request, response) =>
     }
 })
 
-router.get('/:id/delete', async (request, response) => {
+router.get('/:id/delete', async (request: Request, response: Response) => {
     const {id} = request.params;
     const result = await Book.findById(id);
     console.log(result)
@@ -100,4 +103,4 @@ router.get('/:id/delete', async (request, response) => {
     }
 })
 
-module.exports = router;
+export default router;
