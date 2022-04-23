@@ -2,14 +2,11 @@ import config from './config';
 import express from 'express';
 import http from 'http';
 import bodyParser from "body-parser";
-import booksRouter from './routes/booksRouter'
+import booksRouter from './routes/booksRouter';
+import booksApiRouter from './routes/booksApiRouter';
 
 const app = express();
 const server = http.createServer(app);
-
-// const booksRouter = require();
-const booksApiRouter = require('./routes/booksApiRouter');
-
 const userRoutes = require('./routes/userRoutes');
 
 const mongoose = require('mongoose');
