@@ -7,3 +7,8 @@ export interface IBook {
 	fileBook: string,
 	favorites: string
 }
+
+export const TYPES = {
+	BookModel: Symbol.for("BookModel"),
+	BookRepository: Symbol.for('BookRepository')
+};

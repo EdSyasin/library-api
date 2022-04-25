@@ -1,4 +1,7 @@
 import {Request, Response} from "express";
+import container from "../services/container";
+import BookRepository from "../services/BookRepository";
+import {TYPES} from "../types";
 
 const router = require('express').Router()
 const Book = require("../models/Book");
@@ -7,6 +10,8 @@ const fileMiddleware = require("../middleware/FileMiddleware");
 const prepareRenderData = require('../utilities/prepareRenderData');
 const requester = require("../utilities/request");
 const config = require("../config");
+
+const bookRepository = container.get<BookRepository>(TYPES.BookRepository);
 
 router.get('/new', (request: Request, response: Response) => {
     response.render('books/create', prepareRenderData({}))

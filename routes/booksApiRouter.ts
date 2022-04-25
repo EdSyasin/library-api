@@ -1,18 +1,20 @@
 import { Request, Response } from "express";
 import BookRepository from "../services/BookRepository";
 import { Types } from "mongoose";
-import {IBook} from "../types";
+import { IBook, TYPES } from "../types";
+import container from "../services/container";
 
 const router = require('express').Router()
 const Book = require("../models/Book");
 const fileMiddleware = require("../middleware/FileMiddleware");
-const requester = require('../utilities/request');
-const config = require('../config');
+
+const bookRepository = container.get<BookRepository>(TYPES.BookRepository);
+
 
 router.get('/:id', async (request: Request, response: Response) => {
     const { id } = request.params;
     const _id = new Types.ObjectId(id)
-    const result = await BookRepository.getBook(_id)
+    const result = await bookRepository.getBook(_id)
     if (result) {
         response.json(result);
     } else {
@@ -21,7 +23,7 @@ router.get('/:id', async (request: Request, response: Response) => {
 })
 
 router.get('/', async (request: Request, response: Response) => {
-    const result = await BookRepository.getBooks()
+    const result = await bookRepository.getBooks()
     if (result.length > 0) {
         response.json(result);
     } else {
@@ -40,7 +42,7 @@ router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cov
         const fileBook = book[0].path;
         const fileCover = cover ? cover[0].path : null
 
-        const _id = await BookRepository.createBook({
+        const _id = await bookRepository.createBook({
             title: bookTitle,
             description: description,
             authors: authors,
@@ -68,7 +70,7 @@ router.put('/:id', fileMiddleware.single('cover'), async (request: Request, resp
         fileCover: request.file?.path || null
     }
 
-    const book = await BookRepository.updateBook(_id, bookInput);
+    const book = await bookRepository.updateBook(_id, bookInput);
     if (!book) {
         response.status(404).json({error: 'Книга не найдена'});
     } else {
@@ -92,7 +94,7 @@ router.get('/:id/download', async (request: Request, response: Response) => {
 router.delete('/:id', async (request: Request, response: Response) => {
     const {id} = request.params;
     const _id = new Types.ObjectId(id)
-    const result = await BookRepository.deleteBook(_id)
+    const result = await bookRepository.deleteBook(_id)
     if (result) {
         response.json('ok');
     } else {
