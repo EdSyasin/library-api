@@ -1,4 +1,4 @@
-const multer = require('multer');
+import multer from 'multer';
 
 const storage = multer.diskStorage({
     destination(req, file, cb){
@@ -9,12 +9,12 @@ const storage = multer.diskStorage({
     }
 })
 
-const fieldsWithTypes = {
+const fieldsWithTypes: {[key: string]: string[]} = {
     book: ['application/epub+zip', 'application/pdf', 'application/fb2'],
     cover: ['image/png', 'image/jpg', 'image/jpeg']
 }
 
-const fileFilter = (req, file, cb) => {
+const fileFilter = (req: Express.Request, file: Express.Multer.File, cb: (error: any, success: boolean) => void) => {
     const types = fieldsWithTypes[file.fieldname];
     if (types && types.includes(file.mimetype)) {
         cb(null, true)
@@ -25,4 +25,4 @@ const fileFilter = (req, file, cb) => {
 };
 
 
-module.exports = multer({storage, fileFilter});
+export default multer({storage, fileFilter});

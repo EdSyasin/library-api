@@ -1,15 +1,15 @@
+import {Router} from "express";
 import { Request, Response } from "express";
 import BookRepository from "../services/BookRepository";
 import { Types } from "mongoose";
 import { IBook, TYPES } from "../types";
 import container from "../services/container";
+import fileMiddleware from "../middleware/FileMiddleware";
+import Book from '../models/Book';
 
-const router = require('express').Router()
-const Book = require("../models/Book");
-const fileMiddleware = require("../middleware/FileMiddleware");
+const router = Router()
 
 const bookRepository = container.get<BookRepository>(TYPES.BookRepository);
-
 
 router.get('/:id', async (request: Request, response: Response) => {
     const { id } = request.params;

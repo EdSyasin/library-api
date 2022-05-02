@@ -1,15 +1,14 @@
+import { Router } from 'express';
 import {Request, Response} from "express";
 import container from "../services/container";
 import BookRepository from "../services/BookRepository";
 import {TYPES} from "../types";
+import fileMiddleware from "../middleware/FileMiddleware";
+import Book from '../models/Book';
+import Comment from '../models/Comment';
+import prepareRenderData from "../utilities/prepareRenderData";
 
-const router = require('express').Router()
-const Book = require("../models/Book");
-const Comment = require("../models/Comment");
-const fileMiddleware = require("../middleware/FileMiddleware");
-const prepareRenderData = require('../utilities/prepareRenderData');
-const requester = require("../utilities/request");
-const config = require("../config");
+const router = Router();
 
 const bookRepository = container.get<BookRepository>(TYPES.BookRepository);
 
@@ -32,11 +31,6 @@ router.get('/:id/edit', async (request: Request, response: Response) => {
     const {id} = request.params;
     const result = await Book.findById(id);
     if (result) {
-        try {
-            result.showCount = await requester.post(config.counterHost, `/counter/${result.id}/incr`);
-        } catch (err) {
-            console.log('count err', err);
-        }
         response.render('books/edit', prepareRenderData({book: result}))
     } else {
         response.render('errors/404', {error: 'книга не найдена'})
@@ -59,7 +53,6 @@ router.post('/', fileMiddleware.fields([{name: 'book', maxCount: 1}, {name: 'cov
         const fileBook = book[0].path;
         const fileCover = cover ? cover[0].path : null
 
-        // const newBook = new Book(bookTitle, description || null, authors || null, favorite || null, fileCover, filename, fileBook);
         const newBook = new Book({
             title: bookTitle,
             description: description,
@@ -86,6 +79,7 @@ router.post('/:id', fileMiddleware.single('cover'), async (request: Request, res
         Object.keys(request.body)
             .filter(key => ['title', 'description', 'authors', 'favorite'].includes(key))
             .forEach(key => {
+                // @ts-ignore
                 book[key] = request.body[key];
             })
         if (request.file) {

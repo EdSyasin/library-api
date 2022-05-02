@@ -1,10 +1,13 @@
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+import passport from 'passport';
+import { IUser } from "../types";
+import { Strategy as LocalStrategy } from "passport-local";
+import { NativeError, Document } from 'mongoose'
+
 const User = require('../models/User');
 const crypto = require('crypto');
 
-function verify(email, password, done) {
-    User.findOne({ email: email }, (err, user) => {
+passport.use('local', new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, (email, password, done) => {
+    User.findOne({ email: email }, (err: NativeError, user: IUser & Document) => {
         if(err) return done(err);
         if(!user) return done(null, false);
 
@@ -13,17 +16,15 @@ function verify(email, password, done) {
 
         return done(null, user);
     })
-}
-
-passport.use('local', new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, verify));
+}));
 passport.serializeUser((user, cb) => {
-    cb(null, user.id);
+    cb(null, user);
 });
 passport.deserializeUser((id, cb) => {
-    User.findById(id, (err, user) => {
+    User.findById(id, (err: NativeError, user: IUser & Document ) => {
         if (err) { return cb(err) }
         cb(null, user)
     })
 });
 
-module.exports = passport;
+export default passport;
