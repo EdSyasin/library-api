@@ -1,13 +1,16 @@
-const { Server } = require('socket.io');
-const Comment = require('../models/Comment')
+import { Server } from 'socket.io';
+import Comment from "../models/Comment";
+import http from 'http'
 
-module.exports = server => {
+export default (server: http.Server) => {
     const io = new Server(server);
     io.on('connection', (socket) => {
         console.log('a user connected');
 
         const { roomName } = socket.handshake.query;
-        socket.join(roomName)
+        if (roomName) {
+            socket.join(roomName)
+        }
 
         socket.on('comment', async (payload) => {
             console.log(payload)
@@ -16,7 +19,9 @@ module.exports = server => {
                 text: payload.comment
             });
             await newComment.save()
-            io.to(roomName).emit('comment', payload.comment)
+            if (roomName) {
+                io.to(roomName).emit('comment', payload.comment)
+            }
         })
     });
     return io

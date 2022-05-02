@@ -4,14 +4,15 @@ import http from 'http';
 import bodyParser from "body-parser";
 import booksRouter from './routes/booksRouter';
 import booksApiRouter from './routes/booksApiRouter';
+import socketService from './services/socket';
+import passport from './services/passport';
+import userRoutes from './routes/userRoutes';
+import mongoose from "mongoose";
 
 const app = express();
 const server = http.createServer(app);
-const userRoutes = require('./routes/userRoutes');
 
-const mongoose = require('mongoose');
-const passport = require('./services/passport');
-const io = (require('./services/socket'))(server);
+const io = socketService(server);
 
 
 app.set('view engine', 'ejs');
@@ -29,20 +30,15 @@ app.use('/user', userRoutes);
 app.use('/books', booksRouter);
 app.use('/api/books', booksApiRouter);
 
-(async () => {
-    try {
-        //await mongoose.connect(`mongodb://${config.mongoUser}:${config.mongoPassword}@${config.mongoHost}:${config.mongoPort}/${config.mongoDb}`);
-        await mongoose.connect(`mongodb://${config.mongoHost}:${config.mongoPort}`, {
-            user: config.mongoUser,
-            pass: config.mongoPassword,
-            dbName: config.mongoDb,
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
+try {
+    mongoose.connect(`mongodb://${config.mongoHost}:${config.mongoPort}`, {
+        user: config.mongoUser,
+        pass: config.mongoPassword,
+        dbName: config.mongoDb,
+    });
 
-        server.listen(config.port);
-    } catch (error) {
-        console.log('error connect', error);
-    }
-})()
+    server.listen(config.port);
+} catch (error) {
+    console.log('error connect', error);
+}
 

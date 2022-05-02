@@ -1,11 +1,12 @@
+import passport from '../services/passport';
+import { Request, Response } from 'express';
+import prepareRenderData from "../utilities/prepareRenderData";
 const router = require('express').Router();
-const prepareRenderData = require('../utilities/prepareRenderData');
-const config = require("../config");
 const User = require('../models/User');
 const crypto = require('crypto');
-const passport = require('../services/passport');
 
-router.get('/me', (request, response) => {
+
+router.get('/me', (request: Request, response: Response) => {
     if (request.isAuthenticated()) {
         response.render('user/profile', prepareRenderData({ user: request.user }));
     } else {
@@ -14,7 +15,7 @@ router.get('/me', (request, response) => {
 })
 
 
-router.get('/login', (request, response) => {
+router.get('/login', (request: Request, response: Response) => {
     if (request.isAuthenticated()){
         response.redirect('/user/me');
     } else {
@@ -23,13 +24,13 @@ router.get('/login', (request, response) => {
 })
 
 router.post('/login', passport.authenticate('local', {failureRedirect: '/user/login'}),
-    async (request, response) => {
+    async (request: Request, response: Response) => {
         response.redirect('/user/me');
 })
 
 
 
-router.get('/signup', (request, response) => {
+router.get('/signup', (request: Request, response: Response) => {
     if (request.isAuthenticated()){
         response.redirect('/user/me');
     } else {
@@ -37,9 +38,9 @@ router.get('/signup', (request, response) => {
     }
 })
 
-router.post('/signup', async (request, response) => {
+router.post('/signup', async (request: Request, response: Response) => {
     const { username, email, password, repassword } = request.body;
-    const errors = {};
+    const errors: {[key: string]: string} = {};
     let isValid = true;
     if(!username) {
         errors.username = 'Введите имя пользователя';
@@ -75,4 +76,4 @@ router.post('/signup', async (request, response) => {
     }
 })
 
-module.exports = router;
+export default router;
